@@ -1,0 +1,8 @@
+torch==2.5.1
+torchvision==0.20.1
+numpy==1.26.4
+pandas==2.2.3
+scikit-learn==1.5.2
+matplotlib==3.8.4
+jupyter==1.0.0
+logging

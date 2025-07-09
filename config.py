@@ -11,10 +11,10 @@ class Config:
         self.do_predict = True
         self.do_load_model = False
 
-        self.num_epoch = 20
-        self.batch_size = 128
+        self.num_epoch = 10  # 从20减少到10
+        self.batch_size = 256  # 从128增加到256或更高
         self.lr = 1e-3
-        self.weight_decay = 1e-4
+        self.weight_decay = 5e-4
         self.max_gen_len = 200
         self.max_len = 125
         # 使用权重共享和 GRU 优化模型规模

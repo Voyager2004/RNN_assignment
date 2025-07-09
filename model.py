@@ -39,11 +39,9 @@ class PoetryModel2(nn.Module):
         super(PoetryModel2, self).__init__()
         self.hidden_dim = hidden_dim
         self.embeddings = nn.Embedding(vocab_size, embedding_dim)
-        # 使用参数更少的 GRU 代替 LSTM
-        self.gru = nn.GRU(embedding_dim, self.hidden_dim, num_layers=2, batch_first=True)
-        # 解码层与 embedding 权重共享，减少参数量
-        self.linear1 = nn.Linear(self.hidden_dim, vocab_size, bias=False)
-        self.linear1.weight = self.embeddings.weight
+        self.gru = nn.GRU(embedding_dim, self.hidden_dim, num_layers=2, batch_first=True, dropout=0.5) # 在GRU中加入dropout
+        self.linear = nn.Linear(self.hidden_dim, vocab_size)
+        self.linear.weight = self.embeddings.weight
 
     def forward(self, input, hidden=None):
         batch_size, seq_len = input.size()
@@ -57,7 +55,7 @@ class PoetryModel2(nn.Module):
         output, hidden = self.gru(embeds, h_0)
 
         # size: (seq_len*batch_size,vocab_size)
-        output = self.linear1(output.contiguous().view(seq_len * batch_size, -1))
+        output = self.linear(output.contiguous().view(seq_len * batch_size, -1))
         return output, hidden
 
 
