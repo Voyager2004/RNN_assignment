@@ -17,5 +17,7 @@ class Config:
         self.weight_decay = 1e-4
         self.max_gen_len = 200
         self.max_len = 125
-        self.embedding_dim = 1000
+        # 使用权重共享和 GRU 优化模型规模
+        # 为了便于权重共享，embedding_dim 与 hidden_dim 设为一致
+        self.embedding_dim = 512
         self.hidden_dim = 512

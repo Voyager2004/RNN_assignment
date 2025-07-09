@@ -39,22 +39,22 @@ class PoetryModel2(nn.Module):
         super(PoetryModel2, self).__init__()
         self.hidden_dim = hidden_dim
         self.embeddings = nn.Embedding(vocab_size, embedding_dim)
-        self.lstm = nn.LSTM(embedding_dim, self.hidden_dim, num_layers=2, batch_first=True)
-        self.linear1 = nn.Linear(self.hidden_dim, vocab_size)
+        # 使用参数更少的 GRU 代替 LSTM
+        self.gru = nn.GRU(embedding_dim, self.hidden_dim, num_layers=2, batch_first=True)
+        # 解码层与 embedding 权重共享，减少参数量
+        self.linear1 = nn.Linear(self.hidden_dim, vocab_size, bias=False)
+        self.linear1.weight = self.embeddings.weight
 
     def forward(self, input, hidden=None):
         batch_size, seq_len = input.size()
         if hidden is None:
-            #  h_0 = 0.01*torch.Tensor(2, batch_size, self.hidden_dim).normal_().cuda()
-            #  c_0 = 0.01*torch.Tensor(2, batch_size, self.hidden_dim).normal_().cuda()
             h_0 = input.data.new(2, batch_size, self.hidden_dim).fill_(0).float()
-            c_0 = input.data.new(2, batch_size, self.hidden_dim).fill_(0).float()
         else:
-            h_0, c_0 = hidden
+            h_0 = hidden
         # size: (seq_len,batch_size,embeding_dim)
         embeds = self.embeddings(input)
         # output size: (seq_len,batch_size,hidden_dim)
-        output, hidden = self.lstm(embeds, (h_0, c_0))
+        output, hidden = self.gru(embeds, h_0)
 
         # size: (seq_len*batch_size,vocab_size)
         output = self.linear1(output.contiguous().view(seq_len * batch_size, -1))
@@ -63,5 +63,5 @@ class PoetryModel2(nn.Module):
 
 if __name__ == '__main__':
     input = torch.tensor([[2, 13, 15, 20], [2, 13, 15, 20]]).long()
-    model = PoetryModel2(10000, 300, 256)
+    model = PoetryModel2(10000, 512, 512)
     ouput, hidden = model(input)
