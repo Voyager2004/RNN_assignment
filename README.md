@@ -24,6 +24,11 @@
 * 原始脚本中 `get_data('./data/peot.txt', config)` 与函数定义不符
 * 已修正为 `get_data(config)`
 
+**4. 模型结构优化：GRU + 权重共享**
+
+* 将两层 LSTM 替换为参数更少的两层 GRU
+* decoder 层与 embedding 权重共享，减少模型文件体积
+
 ---
 
 ## ⚙️ 模型参数配置（调参后）
@@ -35,7 +40,7 @@ self.lr = 1e-3
 self.weight_decay = 1e-4
 self.max_gen_len = 200
 self.max_len = 125
-self.embedding_dim = 1000
+self.embedding_dim = 512
 self.hidden_dim = 512
 ```
 
