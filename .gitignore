@@ -1,0 +1,16 @@
+checkpoints/*.pt
+checkpoints/*.pth
+# Python 缓存
+__pycache__/
+*.pyc
+
+# 日志和临时模型
+*.log
+*.tmp
+
+# VSCode 设置
+.vscode/
+
+# 环境配置
+.env
+
